@@ -57,17 +57,20 @@ class ChatElement extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(user.date!.difference(DateTime.now()).inDays < -7
-                    ? DateFormat.MMMd("ru").format(user.date!)
-                    : user.date!.difference(DateTime.now()).inDays < -1
-                        ? DateFormat.EEEE('ru').format(user.date!)
-                        : DateFormat.Hm().format(user.date!)),
+                Expanded(
+                  child: Text(user.date!.difference(DateTime.now()).inDays < -7
+                      ? DateFormat.MMMd("ru").format(user.date!)
+                      : user.date!.difference(DateTime.now()).inDays < -1
+                          ? DateFormat.EEEE('ru').format(user.date!)
+                          : DateFormat.Hm().format(user.date!)),
+                ),
                 user.countUnreadMessages > 0
-                    ? Container(
+                    ? Expanded(
+                        child: Container(
                         width: 35,
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.black45,
+                          color: Color.fromARGB(255, 26, 38, 56),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(5),
@@ -82,12 +85,8 @@ class ChatElement extends StatelessWidget {
                             textAlign: TextAlign.center,
                           ),
                         ),
-                      )
-                    : Container(
-                        width: 1,
-                        height: 1,
-                        color: Colors.transparent,
-                      ),
+                      ))
+                    : Spacer(),
               ],
             ),
     );

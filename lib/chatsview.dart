@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:praktika/chatelement.dart';
 import 'package:praktika/user.dart';
+import 'package:search_page/search_page.dart';
 
 class ChatsView extends StatefulWidget {
   const ChatsView({super.key});
@@ -41,9 +43,30 @@ class _ChatsViewState extends State<ChatsView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 26, 38, 56),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () => showSearch(
+              context: context,
+              delegate: SearchPage(
+                onQueryUpdate: print,
+                barTheme: ThemeData(
+                  appBarTheme: const AppBarTheme(
+                      backgroundColor: Color.fromARGB(255, 26, 38, 56)),
+                ),
+                searchStyle: GoogleFonts.roboto(color: Colors.white),
+                items: users,
+                suggestion: const Center(
+                  child:
+                      Text('Поиск чатов по сообщению или имени пользователя'),
+                ),
+                failure: const Center(
+                  child: Text('Ничего не найдено'),
+                ),
+                filter: (user) => [user.userName, user.lastMessage],
+                builder: (user) => ChatElement(user),
+              ),
+            ),
             icon: Icon(Icons.search_sharp),
           ),
         ],
