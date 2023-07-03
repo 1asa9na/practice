@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+
 class User {
   String userName;
   String? lastMessage;
@@ -8,9 +10,17 @@ class User {
   String? userAvatar;
   int countUnreadMessages;
   Color mainColor;
+  bool isSurpressed = false;
+  bool isStarred = false;
 
-  User(this.userName, this.lastMessage, this.date, this.userAvatar,
-      this.countUnreadMessages, this.mainColor);
+  User(
+    this.userName,
+    this.lastMessage,
+    this.date,
+    this.userAvatar,
+    this.countUnreadMessages,
+    this.mainColor,
+  );
 
   factory User.fromJson(Map json) => User(
       json['userName'],

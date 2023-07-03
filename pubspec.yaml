@@ -9,9 +9,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_slidable: ^3.0.0
   google_fonts: ^4.0.4
   intl: ^0.18.1
+  quiver: ^3.2.1
   search_page: ^2.3.0
+  text_scroll: ^0.2.0
 
 dev_dependencies:
   flutter_test:
