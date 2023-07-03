@@ -155,7 +155,6 @@ class ChatsViewState extends State<ChatsView> {
             title: Text("Помеченные", style: GoogleFonts.roboto()),
             onTap: () => setState(() => {
                   usersList = usersList.where((u) => u.isStarred).toList(),
-                  print(usersList.length);
                   usersFilter = multipleFilter(usersList, [
                     (u) => u.lastMessage != null,
                     (u) => u.countUnreadMessages > 0,
