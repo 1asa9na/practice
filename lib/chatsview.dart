@@ -77,6 +77,7 @@ class ChatsViewState extends State<ChatsView> {
               context: context,
               delegate: SearchPage(
                 barTheme: ThemeData(
+                  scaffoldBackgroundColor: appTheme.mainThemeAmbientColor,
                   appBarTheme: AppBarTheme(
                       titleTextStyle: appTheme.mainTextStyle,
                       foregroundColor: appTheme.mainThemeElementColor,
