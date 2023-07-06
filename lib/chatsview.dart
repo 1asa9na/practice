@@ -5,11 +5,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:praktika/apptheme.dart';
 import 'package:praktika/chatelement.dart';
+import 'package:praktika/colorpalette.dart';
+import 'package:praktika/themepickerwidget.dart';
 import 'package:praktika/user.dart';
 import 'package:quiver/iterables.dart';
 import 'package:search_page/search_page.dart';
 import 'avatarcontainer.dart';
+import 'constants.dart';
 
 class ChatsView extends StatefulWidget {
   const ChatsView({super.key});
@@ -32,6 +36,8 @@ class ChatsViewState extends State<ChatsView> {
   List<User> usersRaw = [];
   bool showEmpty = true;
   bool showUnreadOnly = false;
+  bool isLightThemeOn = false;
+  AppTheme appTheme = AppTheme(Constants.colorSchemes[0]);
 
   @override
   initState() {
@@ -59,49 +65,71 @@ class ChatsViewState extends State<ChatsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: appTheme.mainThemeAmbientColor,
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 26, 38, 56),
+        elevation: 0,
+        iconTheme: IconThemeData(color: appTheme.mainThemeElementColor),
+        toolbarTextStyle: appTheme.mainTextStyle,
+        backgroundColor: appTheme.mainThemeAccentColor,
         actions: [
           IconButton(
             onPressed: () => showSearch(
               context: context,
               delegate: SearchPage(
-                onQueryUpdate: print,
                 barTheme: ThemeData(
-                  appBarTheme: const AppBarTheme(
-                      backgroundColor: Color.fromARGB(255, 26, 38, 56)),
+                  appBarTheme: AppBarTheme(
+                      titleTextStyle: appTheme.mainTextStyle,
+                      foregroundColor: appTheme.mainThemeElementColor,
+                      iconTheme:
+                          IconThemeData(color: appTheme.mainThemeElementColor),
+                      backgroundColor: appTheme.mainThemeAccentColor),
                 ),
-                searchStyle: GoogleFonts.roboto(color: Colors.white),
+                searchStyle: appTheme.mainTextStyle,
                 items: usersFilter,
-                suggestion: const Center(
-                  child:
-                      Text('Поиск чатов по сообщению или имени пользователя'),
+                suggestion: Center(
+                  child: Text(
+                    'Поиск чатов по сообщению или имени пользователя',
+                    style: appTheme.mainTextStyle,
+                  ),
                 ),
-                failure: const Center(
-                  child: Text('Ничего не найдено'),
+                failure: Center(
+                  child:
+                      Text('Ничего не найдено', style: appTheme.mainTextStyle),
                 ),
                 filter: (user) => [user.userName, user.lastMessage],
-                builder: (user) => ChatElement(user),
+                builder: (user) => ChatElement(user, appTheme),
               ),
             ),
-            icon: const Icon(Icons.search_sharp),
+            icon: const Icon(
+              Icons.search_sharp,
+            ),
           ),
+          IconButton(
+              onPressed: () => setState(() {
+                    isLightThemeOn = !isLightThemeOn;
+                    updateTheme(appTheme.colorScheme);
+                  }),
+              icon: Icon(
+                isLightThemeOn
+                    ? Icons.brightness_2_sharp
+                    : Icons.brightness_4_sharp,
+              ))
         ],
       ),
       body: Center(
         child: usersFilter.isEmpty
             ? Text("Здесь будут отображаться ваши чаты",
-                style: GoogleFonts.roboto())
+                style: appTheme.mainTextStyle)
             : ListView.builder(
                 itemCount: usersFilter.length,
                 itemBuilder: (context, index) =>
                     buildItem(context, usersFilter[index])),
       ),
       drawer: Drawer(
+        backgroundColor: appTheme.mainThemeAmbientColor,
         child: ListView(children: [
           DrawerHeader(
-            decoration:
-                const BoxDecoration(color: Color.fromARGB(255, 26, 38, 56)),
+            decoration: BoxDecoration(color: appTheme.mainThemeAccentColor),
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -112,10 +140,7 @@ class ChatsViewState extends State<ChatsView> {
                   AvatarContainer(user: mainUser),
                   Text(
                     mainUser.userName,
-                    style: GoogleFonts.roboto(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 32),
+                    style: appTheme.headerTextStyle,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
@@ -124,7 +149,8 @@ class ChatsViewState extends State<ChatsView> {
             ),
           ),
           CheckboxListTile(
-            title: Text("Отображать пустые чаты", style: GoogleFonts.roboto()),
+            title:
+                Text("Отображать пустые чаты", style: appTheme.mainTextStyle),
             value: showEmpty,
             onChanged: (value) => setState(() {
               showEmpty = !showEmpty;
@@ -138,7 +164,7 @@ class ChatsViewState extends State<ChatsView> {
             }),
           ),
           CheckboxListTile(
-            title: Text("Только непрочитанные", style: GoogleFonts.roboto()),
+            title: Text("Только непрочитанные", style: appTheme.mainTextStyle),
             value: showUnreadOnly,
             onChanged: (value) => setState(() {
               showUnreadOnly = !showUnreadOnly;
@@ -152,7 +178,7 @@ class ChatsViewState extends State<ChatsView> {
             }),
           ),
           ListTile(
-            title: Text("Помеченные", style: GoogleFonts.roboto()),
+            title: Text("Помеченные", style: appTheme.mainTextStyle),
             onTap: () => setState(() => {
                   usersList = usersList.where((u) => u.isStarred).toList(),
                   usersFilter = multipleFilter(usersList, [
@@ -165,7 +191,7 @@ class ChatsViewState extends State<ChatsView> {
                 }),
           ),
           ListTile(
-            title: Text("Все чаты", style: GoogleFonts.roboto()),
+            title: Text("Все чаты", style: appTheme.mainTextStyle),
             onTap: () => setState(() => {
                   usersList = usersRaw,
                   usersFilter = multipleFilter(usersList, [
@@ -178,6 +204,40 @@ class ChatsViewState extends State<ChatsView> {
                 }),
           ),
         ]),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: appTheme.mainThemeAccentColor,
+        shape: CircularNotchedRectangle(),
+        elevation: 0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.contacts_sharp,
+                color: appTheme.mainThemeElementColor,
+              ),
+            ),
+            IconButton(
+              onPressed: () => showDialog(
+                  context: context,
+                  builder: (context) => ThemePickerWidget(updateTheme)),
+              icon: Icon(Icons.brush_sharp,
+                  color: appTheme.mainThemeElementColor),
+            ),
+          ],
+        ),
+      ),
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.miniCenterDocked,
+      floatingActionButton: FloatingActionButton.small(
+        backgroundColor: appTheme.mainThemeAccentColor,
+        onPressed: () {},
+        child: Icon(
+          Icons.add,
+          color: appTheme.mainThemeElementColor,
+        ),
       ),
     );
   }
@@ -224,5 +284,8 @@ class ChatsViewState extends State<ChatsView> {
           ),
         ],
       ),
-      child: ChatElement(user));
+      child: ChatElement(user, appTheme));
+
+  void updateTheme(ColorPalette colorScheme) => setState(
+      () => appTheme = AppTheme(colorScheme, isLightThemeOn: isLightThemeOn));
 }

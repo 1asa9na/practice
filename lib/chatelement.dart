@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:praktika/apptheme.dart';
 import 'package:praktika/avatarcontainer.dart';
 import 'package:praktika/user.dart';
 import 'package:text_scroll/text_scroll.dart';
 
 class ChatElement extends StatelessWidget {
   final User user;
-  const ChatElement(this.user, {super.key});
+  final AppTheme appTheme;
+  const ChatElement(this.user, this.appTheme, {super.key});
 
   @override
   Widget build(BuildContext context) => ListTile(
         leading: AvatarContainer(user: user),
-        title: Text(user.userName),
+        title: Text(user.userName, style: appTheme.mainTextStyle),
         subtitle: Text(user.lastMessage ?? "",
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.montserrat(color: Colors.black87)),
+            style: appTheme.mainTextStyle),
         trailing: user.lastMessage == null
             ? null
             : Column(
@@ -24,12 +25,13 @@ class ChatElement extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Expanded(
-                    child:
-                        Text(user.date!.difference(DateTime.now()).inDays < -7
+                    child: Text(
+                        user.date!.difference(DateTime.now()).inDays < -7
                             ? DateFormat.MMMd("ru").format(user.date!)
                             : user.date!.difference(DateTime.now()).inDays < -1
                                 ? DateFormat.EEEE('ru').format(user.date!)
-                                : DateFormat.Hm().format(user.date!)),
+                                : DateFormat.Hm().format(user.date!),
+                        style: appTheme.mainTextStyle),
                   ),
                   user.countUnreadMessages > 0
                       ? Expanded(
@@ -38,8 +40,8 @@ class ChatElement extends StatelessWidget {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: user.isSurpressed
-                                ? const Color.fromARGB(255, 170, 170, 170)
-                                : const Color.fromARGB(255, 26, 38, 56),
+                                ? Colors.black26
+                                : appTheme.mainThemeAccentColor,
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(5),
@@ -47,15 +49,12 @@ class ChatElement extends StatelessWidget {
                               user.countUnreadMessages < 100
                                   ? "${user.countUnreadMessages}"
                                   : "99+",
-                              style: GoogleFonts.montserrat(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12),
+                              style: appTheme.mainTextStyle,
                               textAlign: TextAlign.center,
                             ),
                           ),
                         ))
-                      : Spacer(),
+                      : const Spacer(),
                 ],
               ),
         onLongPress: () => showDialog(
@@ -67,7 +66,7 @@ class ChatElement extends StatelessWidget {
                 height: 200,
                 child: Container(
                   padding: const EdgeInsets.all(20),
-                  color: Color.fromARGB(255, 26, 38, 56),
+                  color: appTheme.mainThemeAmbientColor,
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
@@ -82,12 +81,8 @@ class ChatElement extends StatelessWidget {
                             ),
                             TextScroll(
                               user.userName,
-                              style: GoogleFonts.roboto(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 32,
-                                color: Colors.white,
-                              ),
-                              delayBefore: Duration(seconds: 1),
+                              style: appTheme.headerTextStyle,
+                              delayBefore: const Duration(seconds: 1),
                             ),
                           ])
                     ],
